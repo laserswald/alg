@@ -1,11 +1,16 @@
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
+#include <assert.h>
+
 #include "alg.h"
 
+// Compare two values.
 int compare(void* a, void* b, const size_t size, int (*deep)(void*, void*)){
     if (deep != NULL) {
         return deep(a, b);
     } else {
+        // This should probably have a more formal exit.
         assert(size != 0);
         return memcmp(a, b, size);
     }
@@ -28,8 +33,8 @@ void* clamp(void* i, void* lo, void* hi, const size_t size, int (*cmp)(void*, vo
         return i;
 }
 
-// This should be pretty obvious.
-void swap(void* a, void* b, const size_t itemsize) {
+// This is much faster, but you need to make sure the memory doesn't overlap.
+void unsafe_swap(void* a, void* b, const size_t itemsize) {
     char* buffer = malloc(itemsize);
 
     memcpy(buffer, a, itemsize);
@@ -38,6 +43,18 @@ void swap(void* a, void* b, const size_t itemsize) {
 
     free(buffer);
 }
+
+// This is slower, but should be pretty reliable.
+void swap(void* a, void* b, const size_t itemsize) {
+    char* buffer = malloc(itemsize);
+
+    memmove(buffer, a, itemsize);
+    memmove(a, b, itemsize);
+    memmove(b, buffer, itemsize);
+
+    free(buffer);
+}
+
 
 /**
  * Filter out repititions from a sorted array, in place.
@@ -108,7 +125,7 @@ void heapify_rec(void* base, const size_t length, const size_t itemsize, int (*c
     // left child. We only need to check and swap root and left.
     if (right_ind >= length) {
         if (compare(base, left, itemsize, cmp) < 0){
-            swap(base, left, itemsize);
+            unsafe_swap(base, left, itemsize);
         }
         return;
     }
@@ -121,7 +138,7 @@ void heapify_rec(void* base, const size_t length, const size_t itemsize, int (*c
     // Now both sides are heapy, we need to heapify this part.
     if (compare(base, left, itemsize, cmp) < 0 || compare(base, right, itemsize, cmp) < 0){
         void* larger = max(left, right, itemsize, cmp);
-        swap(base, larger, itemsize);
+        unsafe_swap(base, larger, itemsize);
     }
 
 }
@@ -141,7 +158,7 @@ void shuffle(void *base, const size_t length, const size_t itemsize){
         // Swap that with the leftmost unshuffled index
         void *to = (char*) base + (itemsize * shuffled);
         void *from = (char*) base + (itemsize * rnd);
-        swap(to, from, itemsize);
+        unsafe_swap(to, from, itemsize);
 
         shuffled++;
     }
@@ -155,7 +172,7 @@ void reverse(void *base, const size_t length, const size_t itemsize){
         // back
         void *back = (char*) base + (itemsize * (length - (i+1)));
 
-        swap(front, back, itemsize);
+        unsafe_swap(front, back, itemsize);
     }
 }
 
