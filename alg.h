@@ -1,8 +1,15 @@
+// alg.h
+/*
+ * Type generic algorithm tools. You will want this if you are dealing with
+ * arrays of... well, anything.
+ *
+ * The array algorithms are inspired by and work just like bsearch and qsort
+ * from the standard library.
+ */
 #ifndef ALGORITHMS_H
 
 #define ALGORITHMS_H
 
-// Type generic algorithms!
 
 #include <string.h>
 #include <stdlib.h>
@@ -31,16 +38,16 @@ void swap(void* a, void* b, const size_t itemsize);
 // Remove repititions, just like the Unix utility.
 //
 // Returns the new length of the array.
-size_t unique(void *base, const size_t itemsize, const size_t length, int (*cmp)(void*, void*));
+size_t unique(void *base, const size_t length, const size_t itemsize, int (*cmp)(void*, void*));
 
 // Turn this array into a heap.
-void heapify(void *base, const size_t itemsize, const size_t length, int (*cmp)(void*, void*));
+void heapify(void *base, const size_t length, const size_t itemsize, int (*cmp)(void*, void*));
 
 // In-place Fisher-Yates (aka Knuth) shuffle.
-void shuffle(void *base, const size_t itemsize, const size_t length);
+void shuffle(void *base, const size_t length, const size_t itemsize);
 
 // In-place reversal.
-void reverse(void *base, const size_t itemsize, const size_t length);
+void reverse(void *base, const size_t length, const size_t itemsize);
 
 #endif /* end of include guard: ALGORITHMS_H */
 

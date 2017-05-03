@@ -45,7 +45,7 @@ void swap(void* a, void* b, const size_t itemsize) {
  * Yeah, I could have named it `uniq` in reference to the command but
  * it's still less than 6 chars, which is fiiiiine
  */
-size_t unique(void* array, const size_t itemsize, const size_t length, int (*cmp)(void*, void*)){
+size_t unique(void* array, const size_t length, const size_t itemsize, int (*cmp)(void*, void*)){
 
     // The new size of this array.
     size_t new_size = length;
@@ -88,21 +88,18 @@ size_t unique(void* array, const size_t itemsize, const size_t length, int (*cmp
 
 // Recursive is easier for this one...
 static
-void heapify_rec(void* base, const size_t itemsize, const size_t length, int (*cmp)(void*, void*), size_t index){
+void heapify_rec(void* base, const size_t length, const size_t itemsize, int (*cmp)(void*, void*), size_t index){
 
     // Base cases.
 
     // This index is past the end of the array, I can't heapify this!
-    if (index >= length)
-        return;
+    if (index >= length) return;
 
     size_t left_ind = index * 2,
            right_ind = (index * 2) + 1;
 
     // If we have no children, left will be past the end of the array.
-    if (left_ind >= length) {
-        return;
-    }
+    if (left_ind >= length) return;
 
     void *left = (char*) base + (itemsize * left_ind),
          *right = (char*) base + (itemsize * right_ind);
@@ -130,12 +127,12 @@ void heapify_rec(void* base, const size_t itemsize, const size_t length, int (*c
 }
 
 // An easier way to call the above recursive function
-void heapify(void* base, const size_t itemsize, const size_t length, int (*cmp)(void*, void*)){
+void heapify(void* base, const size_t length, const size_t itemsize, int (*cmp)(void*, void*)){
     heapify_rec(base, itemsize, length, cmp, 0);
 }
 
 // Everyone do the Knuth shuffle!
-void shuffle(void *base, const size_t itemsize, const size_t length){
+void shuffle(void *base, const size_t length, const size_t itemsize){
     size_t shuffled = 0;
     while (shuffled < length) {
         // Get a random index from the section we haven't shuffled
@@ -151,7 +148,7 @@ void shuffle(void *base, const size_t itemsize, const size_t length){
 }
 
 // n/2 reverse algorithm. Should be fastest?
-void reverse(void *base, const size_t itemsize, const size_t length){
+void reverse(void *base, const size_t length, const size_t itemsize){
     for (size_t i = 0; i < (length/2); ++i){
         // front
         void *front = (char*) base + (itemsize * i);
